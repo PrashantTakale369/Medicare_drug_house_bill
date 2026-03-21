@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bill Of Supply - Medicare Drug House</title>
+  <style>
+    :root {
+      --line: #000;
+      --line-thin: 1px solid var(--line);
+      --line-thick: 2px solid var(--line);
+      --head-bg: #e8e8e8;
+      --font: Arial, Helvetica, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+      color: #000;
+      font-family: var(--font);
+    }
+
+    .page {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding: 10px;
+      border: var(--line-thin);
+      background: #fff;
+    }
+
+    .toolbar button {
+      border: var(--line-thin);
+      background: #fff;
+      color: #000;
+      font-size: 14px;
+      font-family: var(--font);
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+
+    .toolbar button:hover {
+      background: #f0f0f0;
+    }
+
+    .bill {
+      border: var(--line-thick);
+      background: #fff;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 30px;
+      font-weight: 700;
+      border-bottom: var(--line-thin);
+      padding: 8px 0;
+      letter-spacing: 0.2px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: fixed;
+      font-size: 17px;
+    }
+
+    .top td {
+      border: var(--line-thin);
+      vertical-align: top;
+      padding: 8px 10px;
+      height: 115px;
+    }
+
+    .left-header {
+      width: 64%;
+    }
+
+    .right-header {
+      width: 36%;
+    }
+
+    .shop-name {
+      font-size: 31px;
+      font-weight: 700;
+      line-height: 1.08;
+      margin-bottom: 2px;
+    }
+
+    .shop-line {
+      margin: 2px 0;
+      font-size: 20px;
+    }
+
+    .right-label {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 2px 10px;
+      align-items: center;
+      font-size: 20px;
+      margin-top: 5px;
+    }
+
+    .subhead td {
+      border: var(--line-thin);
+      background: #f4f4f4;
+      font-size: 22px;
+      padding: 6px 10px;
+      height: 40px;
+    }
+
+    .sub-date {
+      width: 33%;
+    }
+
+    .sub-memo {
+      width: 34%;
+      text-align: center;
+    }
+
+    .sub-time {
+      width: 33%;
+      text-align: right;
+    }
+
+    .bill-input {
+      border: none;
+      border-bottom: 1px dotted #999;
+      outline: none;
+      background: transparent;
+      font: inherit;
+      min-width: 20px;
+      padding: 1px 2px;
+      color: #000;
+    }
+
+    .bill-input:focus {
+      border-bottom-color: #000;
+    }
+
+    .items th,
+    .items td {
+      border: var(--line-thin);
+      padding: 4px 5px;
+      font-size: 18px;
+    }
+
+    .items th {
+      background: var(--head-bg);
+      text-align: center;
+      font-weight: 700;
+      height: 33px;
+    }
+
+    .items td {
+      height: 34px;
+    }
+
+    .items td.num,
+    .items td.center {
+      text-align: center;
+    }
+
+    .row-sr {
+      font-size: 17px;
+      text-align: center;
+    }
+
+    .item-input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 17px;
+      font-family: var(--font);
+      color: #000;
+      padding: 1px 2px;
+    }
+
+    .item-input.num {
+      text-align: right;
+    }
+
+    .amt-cell {
+      text-align: right;
+      font-size: 17px;
+      padding-right: 8px;
+      white-space: nowrap;
+    }
+
+    .row-delete-btn {
+      border: none;
+      background: transparent;
+      color: #000;
+      font-size: 16px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0 2px;
+    }
+
+    .row-delete-btn:hover {
+      color: #d00;
+    }
+
+    .footer td {
+      border: var(--line-thin);
+      vertical-align: top;
+    }
+
+    .footer-left {
+      width: 67%;
+      padding: 8px 10px;
+      font-size: 17px;
+      line-height: 1.28;
+      height: 100px;
+    }
+
+    .footer-middle {
+      width: 18%;
+      text-align: center;
+      padding: 8px 6px;
+      font-size: 18px;
+      height: 100px;
+    }
+
+    .footer-right {
+      width: 15%;
+      padding: 0;
+      height: 100px;
+    }
+
+    .sign-top {
+      margin-top: 2px;
+      margin-bottom: 20px;
+      font-size: 15px;
+      line-height: 1.1;
+    }
+
+    .sign-bottom {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+
+    .totals {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      height: 100%;
+      font-size: 22px;
+    }
+
+    .totals td {
+      border: var(--line-thin);
+      padding: 4px 6px;
+      height: 33.33%;
+    }
+
+    .totals-label {
+      width: 54%;
+      font-weight: 700;
+      font-size: 17px;
+    }
+
+    .totals-value {
+      width: 46%;
+      text-align: right;
+      font-size: 17px;
+      white-space: nowrap;
+    }
+
+    .net-row .totals-label,
+    .net-row .totals-value {
+      font-weight: 700;
+      font-size: 28px;
+    }
+
+    .hidden-print {
+      display: inline-flex;
+    }
+
+    .screen-only {
+      display: inline;
+    }
+
+    .print-only {
+      display: none;
+    }
+
+    @media (max-width: 1200px) {
+      .title { font-size: 28px; }
+      .shop-name { font-size: 26px; }
+      .shop-line, .right-label, .subhead td { font-size: 17px; }
+      .items th, .items td, .item-input { font-size: 15px; }
+      .footer-left, .footer-middle, .totals td { font-size: 15px; }
+      .net-row .totals-label, .net-row .totals-value { font-size: 22px; }
+    }
+
+    @media print {
+      @page {
+        size: A4 landscape;
+        margin: 6mm;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: #fff;
+      }
+
+      .page {
+        max-width: none;
+      }
+
+      .toolbar,
+      .screen-only {
+        display: none !important;
+      }
+
+      .print-only {
+        display: inline;
+      }
+
+      .bill {
+        border: 1.5px solid #000;
+        width: 100%;
+        page-break-inside: avoid;
+      }
+
+      .title {
+        font-size: 24px;
+        padding: 4px 0;
+      }
+
+      .top td {
+        height: 84px;
+        padding: 5px 7px;
+      }
+
+      .shop-name {
+        font-size: 22px;
+      }
+
+      .shop-line,
+      .right-label {
+        font-size: 14px;
+      }
+
+      .subhead td {
+        font-size: 14px;
+        height: 26px;
+        padding: 2px 7px;
+      }
+
+      .items th,
+      .items td,
+      .item-input {
+        font-size: 12px;
+      }
+
+      .items th {
+        height: 24px;
+        padding: 2px 3px;
+      }
+
+      .items td {
+        height: 21px;
+        padding: 1px 3px;
+      }
+
+      .footer-left,
+      .footer-middle,
+      .footer-right {
+        height: 76px;
+      }
+
+      .footer-left {
+        font-size: 12px;
+        padding: 4px 7px;
+      }
+
+      .footer-middle {
+        font-size: 12px;
+        padding: 4px;
+      }
+
+      #footerNotes {
+        height: 60px !important;
+      }
+
+      .sign-top {
+        margin-bottom: 12px;
+        font-size: 11px;
+      }
+
+      .sign-bottom {
+        margin-top: 12px;
+        font-size: 13px;
+      }
+
+      .totals td,
+      .totals-label,
+      .totals-value {
+        font-size: 12px;
+        padding: 2px 4px;
+      }
+
+      .bill-input,
+      .item-input {
+        border: none !important;
+      }
+
+      .row-delete-btn {
+        display: none !important;
+      }
+
+      .net-row .totals-label,
+      .net-row .totals-value {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="toolbar hidden-print">
+      <button id="newBillBtn" type="button">New Bill</button>
+      <button id="addRowBtn" type="button">Add Row</button>
+      <button id="printBtn" type="button">Print / Download</button>
+      <button id="clearBtn" type="button">Clear Fields</button>
+    </div>
+
+    <div class="bill" id="bill">
+      <div class="title">Bill Of Supply</div>
+
+      <table class="top">
+        <tr>
+          <td class="left-header">
+            <div class="shop-name">MEDICARE DRUG HOUSE</div>
+            <div class="shop-line">SHOP NO. 05, GROUND FOOR,</div>
+            <div class="shop-line">WING D, ESPACIO BUILDING</div>
+            <div class="shop-line">OPPO. PALAZZO. BALEWADI. MB-9763571929</div>
+          </td>
+          <td class="right-header">
+            <div class="right-label">
+              <span>Patient :</span>
+              <input class="bill-input" id="patient" type="text" />
+
+              <span>Address :</span>
+              <input class="bill-input" id="address" type="text" />
+
+              <span>Mobile&nbsp;&nbsp;:</span>
+              <input class="bill-input" id="mobile" type="text" />
+
+              <span>Doctor&nbsp;&nbsp;:</span>
+              <input class="bill-input" id="doctor" type="text" />
+            </div>
+          </td>
+        </tr>
+      </table>
+
+      <table class="subhead">
+        <tr>
+          <td class="sub-date">
+            Date :
+            <input class="bill-input" id="billDate" type="text" style="width: 130px;" />
+          </td>
+          <td class="sub-memo">
+            Memo No.
+            <input class="bill-input" id="memoNo" type="text" style="width: 110px; text-align: center;" />
+          </td>
+          <td class="sub-time">
+            Time :
+            <input class="bill-input" id="billTime" type="text" style="width: 95px; text-align: right;" />
+          </td>
+        </tr>
+      </table>
+
+      <table class="items">
+        <colgroup>
+          <col style="width: 5.4%;">
+          <col style="width: 9%;">
+          <col style="width: 31%;">
+          <col style="width: 13%;">
+          <col style="width: 13%;">
+          <col style="width: 7%;">
+          <col style="width: 6.5%;">
+          <col style="width: 10%;">
+          <col style="width: 10%;">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Sr</th>
+            <th>HSN Code</th>
+            <th>Description</th>
+            <th>Comp</th>
+            <th>Batch No.</th>
+            <th>Exp</th>
+            <th>Qty</th>
+            <th>M.R.P.</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody id="itemsBody"></tbody>
+      </table>
+
+      <table class="footer">
+        <tr>
+          <td class="footer-left">
+            <textarea
+              id="footerNotes"
+              class="item-input"
+              style="width: 100%; height: 74px; resize: none;"
+            >D.L.No: 20-589897, 20C-589899, 21-589898
+GSTIN: Pan:    State Code: 27
+E &amp; OE.  Subject To PUNE jurisdiction</textarea>
+          </td>
+          <td class="footer-middle">
+            <div class="sign-top">For MEDICARE DRUG HOUSE</div>
+            <div class="sign-bottom">Pharmacists</div>
+          </td>
+          <td class="footer-right">
+            <table class="totals">
+              <tr>
+                <td class="totals-label">GROSS</td>
+                <td class="totals-value" id="grossValue">0.00</td>
+              </tr>
+              <tr>
+                <td class="totals-label">LESS :</td>
+                <td class="totals-value">
+                  <input class="item-input num" id="lessValue" type="number" step="0.01" min="0" value="0" />
+                </td>
+              </tr>
+              <tr class="net-row">
+                <td class="totals-label">NET :</td>
+                <td class="totals-value" id="netValue">0.00</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const STORAGE_KEY = "medicare_bill_draft_v1";
+      const MEMO_COUNTER_KEY = "medicare_bill_memo_counter_v1";
+      const DEFAULT_ROW_COUNT = 14;
+
+      const itemsBody = document.getElementById("itemsBody");
+      const grossValue = document.getElementById("grossValue");
+      const netValue = document.getElementById("netValue");
+      const lessInput = document.getElementById("lessValue");
+
+      const fieldIds = [
+        "patient", "address", "mobile", "doctor",
+        "billDate", "memoNo", "billTime", "footerNotes", "lessValue"
+      ];
+
+      function nowDate() {
+        const d = new Date();
+        const dd = String(d.getDate()).padStart(2, "0");
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const yyyy = d.getFullYear();
+        return dd + "-" + mm + "-" + yyyy;
+      }
+
+      function nowTime() {
+        const d = new Date();
+        const hours24 = d.getHours();
+        const hh = String((hours24 % 12) || 12).padStart(2, "0");
+        const mm = String(d.getMinutes()).padStart(2, "0");
+        const ss = String(d.getSeconds()).padStart(2, "0");
+        const ampm = hours24 >= 12 ? "PM" : "AM";
+        return hh + ":" + mm + ":" + ss + " " + ampm;
+      }
+
+      function formatMoney(val) {
+        const num = Number(val);
+        if (!Number.isFinite(num)) return "0.00";
+        return num.toFixed(2);
+      }
+
+      function parsePositive(value) {
+        const n = parseFloat(value);
+        return Number.isFinite(n) ? n : 0;
+      }
+
+      function getNextMemo() {
+        const existing = parseInt(localStorage.getItem(MEMO_COUNTER_KEY) || "457", 10);
+        const next = Number.isFinite(existing) ? existing + 1 : 458;
+        localStorage.setItem(MEMO_COUNTER_KEY, String(next));
+        return String(next);
+      }
+
+      function updateSerials() {
+        Array.from(itemsBody.querySelectorAll("tr")).forEach(function (row, idx) {
+          row.querySelector(".row-sr").textContent = String(idx + 1);
+        });
+      }
+
+      function rowDataFromElement(row) {
+        return {
+          hsn: row.querySelector(".hsn").value || "",
+          desc: row.querySelector(".desc").value || "",
+          comp: row.querySelector(".comp").value || "",
+          batch: row.querySelector(".batch").value || "",
+          exp: row.querySelector(".exp").value || "",
+          qty: row.querySelector(".qty").value || "",
+          mrp: row.querySelector(".mrp").value || ""
+        };
+      }
+
+      function createRow(data) {
+        const row = document.createElement("tr");
+
+        row.innerHTML = [
+          '<td class="row-sr center"></td>',
+          '<td><input class="item-input hsn" type="text"></td>',
+          '<td><input class="item-input desc" type="text"></td>',
+          '<td><input class="item-input comp" type="text"></td>',
+          '<td><input class="item-input batch" type="text"></td>',
+          '<td><input class="item-input exp" type="text"></td>',
+          '<td><input class="item-input num qty" type="number" step="1" min="0"></td>',
+          '<td><input class="item-input num mrp" type="number" step="0.01" min="0"></td>',
+          '<td class="amt-cell"><span class="amount"></span> <button class="row-delete-btn screen-only" type="button" title="Delete row">x</button></td>'
+        ].join("");
+
+        if (data) {
+          row.querySelector(".hsn").value = data.hsn || "";
+          row.querySelector(".desc").value = data.desc || "";
+          row.querySelector(".comp").value = data.comp || "";
+          row.querySelector(".batch").value = data.batch || "";
+          row.querySelector(".exp").value = data.exp || "";
+          row.querySelector(".qty").value = data.qty || "";
+          row.querySelector(".mrp").value = data.mrp || "";
+        }
+
+        row.addEventListener("input", function () {
+          updateRowAmount(row);
+          updateTotals();
+          saveDraft();
+        });
+
+        row.querySelector(".row-delete-btn").addEventListener("click", function () {
+          if (itemsBody.rows.length <= 1) return;
+          row.remove();
+          updateSerials();
+          updateTotals();
+          saveDraft();
+        });
+
+        itemsBody.appendChild(row);
+        updateRowAmount(row);
+        updateSerials();
+      }
+
+      function updateRowAmount(row) {
+        const qtyInput = row.querySelector(".qty");
+        const mrpInput = row.querySelector(".mrp");
+        const qtyRaw = qtyInput.value.trim();
+        const mrpRaw = mrpInput.value.trim();
+        const qty = parsePositive(qtyRaw);
+        const mrp = parsePositive(mrpRaw);
+        const amount = qty * mrp;
+        const bothPresent = qtyRaw !== "" && mrpRaw !== "";
+        row.querySelector(".amount").textContent = bothPresent ? formatMoney(amount) : "";
+      }
+
+      function updateTotals() {
+        const rows = Array.from(itemsBody.querySelectorAll("tr"));
+        const gross = rows.reduce(function (sum, row) {
+          return sum + parsePositive(row.querySelector(".amount").textContent);
+        }, 0);
+        const less = parsePositive(lessInput.value);
+        const net = gross - less;
+
+        grossValue.textContent = formatMoney(gross);
+        netValue.textContent = formatMoney(net < 0 ? 0 : net);
+      }
+
+      function gatherData() {
+        const fields = {};
+        fieldIds.forEach(function (id) {
+          fields[id] = document.getElementById(id).value;
+        });
+        const items = Array.from(itemsBody.querySelectorAll("tr")).map(rowDataFromElement);
+        return { fields: fields, items: items };
+      }
+
+      function saveDraft() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(gatherData()));
+      }
+
+      function loadDraft() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return false;
+          const parsed = JSON.parse(raw);
+          if (!parsed || !parsed.fields || !Array.isArray(parsed.items)) return false;
+
+          fieldIds.forEach(function (id) {
+            if (typeof parsed.fields[id] !== "undefined") {
+              document.getElementById(id).value = parsed.fields[id];
+            }
+          });
+
+          itemsBody.innerHTML = "";
+          const rows = parsed.items.length ? parsed.items : new Array(DEFAULT_ROW_COUNT).fill({});
+          rows.forEach(function (row) {
+            createRow(row);
+          });
+
+          updateTotals();
+          return true;
+        } catch (_e) {
+          return false;
+        }
+      }
+
+      function createFreshBill() {
+        document.getElementById("patient").value = "";
+        document.getElementById("address").value = "";
+        document.getElementById("mobile").value = "";
+        document.getElementById("doctor").value = "";
+        document.getElementById("billDate").value = nowDate();
+        document.getElementById("memoNo").value = getNextMemo();
+        document.getElementById("billTime").value = nowTime();
+        document.getElementById("footerNotes").value =
+          "D.L.No: 20-589897, 20C-589899, 21-589898\nGSTIN: Pan:    State Code: 27\nE & OE.  Subject To PUNE jurisdiction";
+        document.getElementById("lessValue").value = "0";
+
+        itemsBody.innerHTML = "";
+        for (let i = 0; i < DEFAULT_ROW_COUNT; i += 1) {
+          createRow();
+        }
+        updateTotals();
+        saveDraft();
+      }
+
+      function clearFieldsOnly() {
+        itemsBody.innerHTML = "";
+        for (let i = 0; i < DEFAULT_ROW_COUNT; i += 1) {
+          createRow();
+        }
+        document.getElementById("patient").value = "";
+        document.getElementById("address").value = "";
+        document.getElementById("mobile").value = "";
+        document.getElementById("doctor").value = "";
+        document.getElementById("billDate").value = nowDate();
+        document.getElementById("billTime").value = nowTime();
+        document.getElementById("lessValue").value = "0";
+        updateTotals();
+        saveDraft();
+      }
+
+      document.getElementById("addRowBtn").addEventListener("click", function () {
+        createRow();
+        updateTotals();
+        saveDraft();
+      });
+
+      document.getElementById("printBtn").addEventListener("click", function () {
+        window.print();
+      });
+
+      document.getElementById("newBillBtn").addEventListener("click", function () {
+        createFreshBill();
+      });
+
+      document.getElementById("clearBtn").addEventListener("click", function () {
+        clearFieldsOnly();
+      });
+
+      fieldIds.forEach(function (id) {
+        const el = document.getElementById(id);
+        el.addEventListener("input", function () {
+          if (id === "lessValue") updateTotals();
+          saveDraft();
+        });
+      });
+
+      const loaded = loadDraft();
+      if (!loaded) {
+        createFreshBill();
+      } else {
+        updateTotals();
+      }
+    })();
+  </script>
+</body>
+</html>
