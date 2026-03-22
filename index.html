@@ -155,11 +155,12 @@
       border: var(--line-thin);
       padding: 4px 5px;
       font-size: 18px;
+      vertical-align: middle;
+      overflow: hidden;
     }
 
     .items th {
       background: var(--head-bg);
-      text-align: center;
       font-weight: 700;
       height: 33px;
     }
@@ -168,18 +169,51 @@
       height: 34px;
     }
 
-    .items td.num,
-    .items td.center {
+    /* Column alignment (matches typical Indian pharmacy bill) */
+    .items th.col-sr,
+    .items td.cell-sr {
       text-align: center;
+    }
+
+    .items th.col-hsn,
+    .items td.cell-hsn {
+      text-align: right;
+    }
+
+    .items th.col-desc,
+    .items td.cell-desc,
+    .items th.col-comp,
+    .items td.cell-comp,
+    .items th.col-batch,
+    .items td.cell-batch {
+      text-align: left;
+    }
+
+    .items th.col-exp,
+    .items td.cell-exp {
+      text-align: center;
+    }
+
+    .items th.col-qty,
+    .items td.cell-qty {
+      text-align: center;
+    }
+
+    .items th.col-mrp,
+    .items td.cell-mrp,
+    .items th.col-amt,
+    .items td.amt-cell {
+      text-align: right;
     }
 
     .row-sr {
       font-size: 17px;
-      text-align: center;
     }
 
     .item-input {
       width: 100%;
+      max-width: 100%;
+      min-width: 0;
       border: none;
       background: transparent;
       outline: none;
@@ -193,10 +227,20 @@
       text-align: right;
     }
 
+    .cell-desc .item-input,
+    .cell-comp .item-input,
+    .cell-batch .item-input {
+      text-align: left;
+    }
+
+    .items .cell-mrp .item-input {
+      font-size: 15px;
+    }
+
     .amt-cell {
-      text-align: right;
-      font-size: 17px;
-      padding-right: 8px;
+      font-size: 15px;
+      padding-right: 4px;
+      padding-left: 2px;
       white-space: nowrap;
     }
 
@@ -214,93 +258,118 @@
       color: #d00;
     }
 
-    .footer td {
+    /* Footer is <tfoot> of .items so vertical lines match: 3+3+3 cols = Sr–Desc | Comp–Exp | Qty–Amount */
+    .items tfoot td {
       border: var(--line-thin);
       vertical-align: top;
     }
 
     .footer-left {
-      width: 67%;
       padding: 8px 10px;
       font-size: 17px;
-      line-height: 1.28;
-      height: 100px;
+      line-height: 1.35;
+      height: 112px;
     }
 
     .footer-middle {
-      width: 18%;
       text-align: center;
-      padding: 8px 6px;
+      padding: 6px 8px;
       font-size: 18px;
-      height: 100px;
-      vertical-align: top;
+      height: 112px;
     }
 
-    /* Signature column: space between "For ..." and "Pharmacists" like printed bill */
+    /* Middle footer: bold “For…”, large signature gap, “Pharmacists” at bottom */
     .sign-block {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      min-height: 84px;
+      justify-content: space-between;
+      min-height: 96px;
       height: 100%;
+      box-sizing: border-box;
     }
 
     .sign-gap {
       flex: 1 1 auto;
-      min-height: 28px;
+      min-height: 36px;
       width: 100%;
     }
 
-    .footer-right {
-      width: 15%;
+    /* Totals span last 3 columns — labels start at Qty line, values align under Amount */
+    .footer-totals {
       padding: 0;
-      height: 100px;
+      height: 112px;
     }
 
     .sign-top {
-      margin-top: 2px;
-      margin-bottom: 0;
-      font-size: 15px;
-      line-height: 1.1;
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.15;
+      font-weight: 700;
+      width: 100%;
     }
 
     .sign-bottom {
-      margin-top: 0;
-      font-size: 18px;
-    }
-
-    .totals {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-      height: 100%;
-      font-size: 22px;
-    }
-
-    .totals td {
-      border: var(--line-thin);
-      padding: 4px 6px;
-      height: 33.33%;
-    }
-
-    .totals-label {
-      width: 54%;
+      margin: 0;
+      font-size: 17px;
       font-weight: 700;
+      width: 100%;
+    }
+
+    #footerNotes {
+      line-height: 1.35;
+    }
+
+    .totals-stack {
+      width: 100%;
+      height: 100%;
+      min-height: 104px;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+    }
+
+    .totals-line {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      flex: 1 1 0;
+      min-height: 0;
+      padding: 4px 8px 4px 6px;
+      border-bottom: var(--line-thin);
       font-size: 17px;
     }
 
-    .totals-value {
-      width: 46%;
+    .totals-line:last-child {
+      border-bottom: none;
+    }
+
+    .totals-line .totals-label {
+      font-weight: 700;
+      text-align: left;
+      flex: 0 0 auto;
+      padding-right: 6px;
+    }
+
+    .totals-line .totals-value {
       text-align: right;
-      font-size: 17px;
+      flex: 0 0 auto;
+      min-width: 4.5em;
       white-space: nowrap;
     }
 
-    .net-row .totals-label,
-    .net-row .totals-value {
+    .totals-line .totals-value .item-input {
+      text-align: right;
+    }
+
+    .totals-line.net-row {
       font-weight: 700;
-      font-size: 28px;
+    }
+
+    .totals-line.net-row .totals-label,
+    .totals-line.net-row .totals-value {
+      font-size: 26px;
     }
 
     .hidden-print {
@@ -320,24 +389,33 @@
       .shop-name { font-size: 26px; }
       .shop-line, .right-label, .subhead td { font-size: 17px; }
       .items th, .items td, .item-input { font-size: 15px; }
-      .footer-left, .footer-middle, .totals td { font-size: 15px; }
-      .net-row .totals-label, .net-row .totals-value { font-size: 22px; }
+      .footer-left, .footer-middle, .totals-line { font-size: 15px; }
+      .totals-line.net-row .totals-label,
+      .totals-line.net-row .totals-value { font-size: 22px; }
     }
 
     @media print {
       @page {
         size: A4 landscape;
-        margin: 6mm;
+        margin: 3mm;
       }
 
+      html,
       body {
         margin: 0;
         padding: 0;
         background: #fff;
+        width: 100%;
+        overflow-x: hidden;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
       }
 
       .page {
         max-width: none;
+        width: 100%;
+        margin: 0;
+        padding: 0;
       }
 
       .toolbar,
@@ -349,106 +427,192 @@
         display: inline;
       }
 
+      /*
+       * Compact bill: NOT full-page wide (no 291mm stretch).
+       * Shorter vertical stack — no flex “stretch” in footer eating height.
+       */
       .bill {
-        border: 1.5px solid #000;
-        width: 100%;
+        border: 1px solid #000;
+        width: 76%;
+        max-width: 220mm;
+        margin: 0 auto;
+        box-sizing: border-box;
+        overflow: hidden;
         page-break-inside: avoid;
+        font-size: 5.5pt;
       }
 
       .title {
-        font-size: 24px;
-        padding: 4px 0;
+        font-size: 8.5pt;
+        padding: 0;
+        line-height: 1;
       }
 
       .top td {
-        height: 84px;
-        padding: 5px 7px;
+        height: auto;
+        min-height: 0;
+        padding: 0.5mm 1.5mm;
       }
 
       .shop-name {
-        font-size: 22px;
+        font-size: 7.5pt;
+        line-height: 1.05;
       }
 
       .shop-line,
       .right-label {
-        font-size: 14px;
+        font-size: 5.5pt;
+        line-height: 1.05;
       }
 
       .subhead td {
-        font-size: 14px;
-        height: 26px;
-        padding: 2px 7px;
+        font-size: 5.5pt;
+        height: auto;
+        min-height: 0;
+        padding: 0.15mm 1.5mm;
+        line-height: 1;
       }
 
-      /* Items table: must fit page width — column % totals 100 in HTML; extra print tightening */
+      .bill-input {
+        font-size: inherit !important;
+      }
+
+      /* Items: strict width + min-width 0 so Amount column cannot push past page */
       .items {
         width: 100%;
         max-width: 100%;
+        table-layout: fixed;
+      }
+
+      .items thead th,
+      .items tbody td {
+        max-width: 0;
+      }
+
+      .items tfoot td {
+        max-width: none;
       }
 
       .items th,
       .items td,
       .item-input {
-        font-size: 10px;
+        font-size: 5.5pt;
       }
 
       .items th {
-        height: 22px;
-        padding: 1px 2px;
+        height: auto;
+        min-height: 0;
+        padding: 0.1mm 0.3mm;
+        line-height: 1;
       }
 
-      .items td {
-        height: 19px;
-        padding: 1px 2px;
+      .items tbody td {
+        height: 2.85mm;
+        padding: 0;
+        line-height: 1;
+      }
+
+      .items .item-input {
+        min-width: 0 !important;
+        padding: 0 0.3mm;
+        font-size: 5.5pt;
+        line-height: 1;
+      }
+
+      .items .cell-desc .item-input {
+        word-wrap: break-word;
+        overflow-wrap: anywhere;
+        white-space: normal;
+      }
+
+      .items .cell-mrp .item-input {
+        font-size: 5pt;
       }
 
       .items .amt-cell {
-        padding-left: 2px;
-        padding-right: 3px;
-        font-size: 10px;
+        padding-left: 0;
+        padding-right: 0.25mm;
+        font-size: 5pt;
+      }
+
+      .items .amt-cell .amount {
+        font-variant-numeric: tabular-nums;
+        display: block;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       .footer-left,
       .footer-middle,
-      .footer-right {
-        height: 92px;
+      .footer-totals {
+        height: auto;
+        vertical-align: top;
       }
 
       .footer-left {
-        font-size: 12px;
-        padding: 4px 7px;
+        font-size: 5.5pt;
+        padding: 0.35mm 0.8mm;
       }
 
       .footer-middle {
-        font-size: 12px;
-        padding: 6px 4px;
+        font-size: 5.5pt;
+        padding: 0.35mm 0.6mm;
+      }
+
+      .footer-totals {
+        padding: 0;
+      }
+
+      .totals-stack {
+        min-height: 0;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .totals-line {
+        flex: 0 0 auto;
+        flex-grow: 0;
+        font-size: 5.5pt;
+        padding: 0.1mm 0.6mm 0.1mm 0.4mm;
+        line-height: 1;
+      }
+
+      .totals-line .totals-value {
+        min-width: 2.2em;
+        font-size: 5.5pt;
       }
 
       #footerNotes {
-        height: 60px !important;
+        height: 8.5mm !important;
+        min-height: 0;
+        font-size: 5pt;
+        line-height: 1.08;
       }
 
       .sign-block {
-        min-height: 78px;
+        min-height: 0;
+        height: auto;
+        justify-content: flex-start;
+        gap: 0.35mm;
       }
 
       .sign-gap {
-        min-height: 36px;
+        display: none;
       }
 
       .sign-top {
-        font-size: 11px;
+        font-size: 5.5pt;
+        font-weight: 700;
+        line-height: 1.05;
       }
 
       .sign-bottom {
-        font-size: 13px;
-      }
-
-      .totals td,
-      .totals-label,
-      .totals-value {
-        font-size: 12px;
-        padding: 2px 4px;
+        font-size: 5.5pt;
+        font-weight: 700;
+        line-height: 1.05;
       }
 
       .bill-input,
@@ -460,9 +624,9 @@
         display: none !important;
       }
 
-      .net-row .totals-label,
-      .net-row .totals-value {
-        font-size: 16px;
+      .totals-line.net-row .totals-label,
+      .totals-line.net-row .totals-value {
+        font-size: 6.5pt;
       }
     }
   </style>
@@ -523,71 +687,70 @@
       </table>
 
       <table class="items">
-        <!-- widths must sum to 100% to avoid Amount column clipping off page when printing -->
+        <!-- widths sum to 100% (proportions like printed bill; Amount strictly bounded) -->
         <colgroup>
           <col class="col-sr" style="width: 5%;">
           <col class="col-hsn" style="width: 8%;">
-          <col class="col-desc" style="width: 28%;">
-          <col class="col-comp" style="width: 12%;">
-          <col class="col-batch" style="width: 12%;">
-          <col class="col-exp" style="width: 6.5%;">
-          <col class="col-qty" style="width: 6%;">
-          <col class="col-mrp" style="width: 10.5%;">
-          <col class="col-amt" style="width: 12%;">
+          <col class="col-desc" style="width: 36%;">
+          <col class="col-comp" style="width: 9%;">
+          <col class="col-batch" style="width: 11%;">
+          <col class="col-exp" style="width: 7%;">
+          <col class="col-qty" style="width: 5%;">
+          <col class="col-mrp" style="width: 9.5%;">
+          <col class="col-amt" style="width: 9.5%;">
         </colgroup>
         <thead>
           <tr>
-            <th>Sr</th>
-            <th>HSN Code</th>
-            <th>Description</th>
-            <th>Comp</th>
-            <th>Batch No.</th>
-            <th>Exp</th>
-            <th>Qty</th>
-            <th>M.R.P.</th>
-            <th>Amount</th>
+            <th class="col-sr">Sr</th>
+            <th class="col-hsn">HSN Code</th>
+            <th class="col-desc">Description</th>
+            <th class="col-comp">Comp</th>
+            <th class="col-batch">Batch No.</th>
+            <th class="col-exp">Exp</th>
+            <th class="col-qty">Qty</th>
+            <th class="col-mrp">M.R.P.</th>
+            <th class="col-amt">Amount</th>
           </tr>
         </thead>
         <tbody id="itemsBody"></tbody>
-      </table>
-
-      <table class="footer">
-        <tr>
-          <td class="footer-left">
-            <textarea
-              id="footerNotes"
-              class="item-input"
-              style="width: 100%; height: 74px; resize: none;"
-            >D.L.No: 20-589897, 20C-589899, 21-589898
+        <tfoot>
+          <tr>
+            <td colspan="3" class="footer-left">
+              <textarea
+                id="footerNotes"
+                class="item-input"
+                style="width: 100%; height: 74px; resize: none;"
+              >D.L.No: 20-589897, 20C-589899, 21-589898
 GSTIN: Pan:    State Code: 27
 E &amp; OE.  Subject To PUNE jurisdiction</textarea>
-          </td>
-          <td class="footer-middle">
-            <div class="sign-block">
-              <div class="sign-top">For MEDICARE DRUG HOUSE</div>
-              <div class="sign-gap" aria-hidden="true"></div>
-              <div class="sign-bottom">Pharmacists</div>
-            </div>
-          </td>
-          <td class="footer-right">
-            <table class="totals">
-              <tr>
-                <td class="totals-label">GROSS</td>
-                <td class="totals-value" id="grossValue">0.00</td>
-              </tr>
-              <tr>
-                <td class="totals-label">LESS :</td>
-                <td class="totals-value">
-                  <input class="item-input num" id="lessValue" type="number" step="0.01" min="0" value="0" />
-                </td>
-              </tr>
-              <tr class="net-row">
-                <td class="totals-label">NET :</td>
-                <td class="totals-value" id="netValue">0.00</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
+            </td>
+            <td colspan="3" class="footer-middle">
+              <div class="sign-block">
+                <div class="sign-top">For MEDICARE DRUG HOUSE</div>
+                <div class="sign-gap" aria-hidden="true"></div>
+                <div class="sign-bottom">Pharmacists</div>
+              </div>
+            </td>
+            <td colspan="3" class="footer-totals">
+              <div class="totals-stack">
+                <div class="totals-line">
+                  <span class="totals-label">GROSS</span>
+                  <span class="totals-value" id="grossValue">0.00</span>
+                </div>
+                <div class="totals-line">
+                  <span class="totals-label">LESS :</span>
+                  <span class="totals-value">
+                    <input class="item-input num" id="lessValue" type="number" step="0.01" min="0" value="0" />
+                  </span>
+                </div>
+                <div class="totals-line net-row">
+                  <span class="totals-label">NET :</span>
+                  <span class="totals-value" id="netValue">0.00</span>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   </div>
@@ -666,15 +829,15 @@ E &amp; OE.  Subject To PUNE jurisdiction</textarea>
         const row = document.createElement("tr");
 
         row.innerHTML = [
-          '<td class="row-sr center"></td>',
-          '<td><input class="item-input hsn" type="text"></td>',
-          '<td><input class="item-input desc" type="text"></td>',
-          '<td><input class="item-input comp" type="text"></td>',
-          '<td><input class="item-input batch" type="text"></td>',
-          '<td><input class="item-input exp" type="text"></td>',
-          '<td><input class="item-input num qty" type="number" step="1" min="0"></td>',
-          '<td><input class="item-input num mrp" type="number" step="0.01" min="0"></td>',
-          '<td class="amt-cell"><span class="amount"></span> <button class="row-delete-btn screen-only" type="button" title="Delete row">x</button></td>'
+          '<td class="row-sr cell-sr"></td>',
+          '<td class="cell-hsn"><input class="item-input hsn" type="text"></td>',
+          '<td class="cell-desc"><input class="item-input desc" type="text"></td>',
+          '<td class="cell-comp"><input class="item-input comp" type="text"></td>',
+          '<td class="cell-batch"><input class="item-input batch" type="text"></td>',
+          '<td class="cell-exp"><input class="item-input exp" type="text"></td>',
+          '<td class="cell-qty"><input class="item-input num qty" type="number" step="1" min="0"></td>',
+          '<td class="cell-mrp"><input class="item-input num mrp" type="number" step="0.01" min="0"></td>',
+          '<td class="amt-cell cell-amt"><span class="amount"></span> <button class="row-delete-btn screen-only" type="button" title="Delete row">x</button></td>'
         ].join("");
 
         if (data) {
