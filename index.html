@@ -233,6 +233,23 @@
       padding: 8px 6px;
       font-size: 18px;
       height: 100px;
+      vertical-align: top;
+    }
+
+    /* Signature column: space between "For ..." and "Pharmacists" like printed bill */
+    .sign-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 84px;
+      height: 100%;
+    }
+
+    .sign-gap {
+      flex: 1 1 auto;
+      min-height: 28px;
+      width: 100%;
     }
 
     .footer-right {
@@ -243,13 +260,13 @@
 
     .sign-top {
       margin-top: 2px;
-      margin-bottom: 20px;
+      margin-bottom: 0;
       font-size: 15px;
       line-height: 1.1;
     }
 
     .sign-bottom {
-      margin-top: 20px;
+      margin-top: 0;
       font-size: 18px;
     }
 
@@ -363,26 +380,38 @@
         padding: 2px 7px;
       }
 
+      /* Items table: must fit page width — column % totals 100 in HTML; extra print tightening */
+      .items {
+        width: 100%;
+        max-width: 100%;
+      }
+
       .items th,
       .items td,
       .item-input {
-        font-size: 12px;
+        font-size: 10px;
       }
 
       .items th {
-        height: 24px;
-        padding: 2px 3px;
+        height: 22px;
+        padding: 1px 2px;
       }
 
       .items td {
-        height: 21px;
-        padding: 1px 3px;
+        height: 19px;
+        padding: 1px 2px;
+      }
+
+      .items .amt-cell {
+        padding-left: 2px;
+        padding-right: 3px;
+        font-size: 10px;
       }
 
       .footer-left,
       .footer-middle,
       .footer-right {
-        height: 76px;
+        height: 92px;
       }
 
       .footer-left {
@@ -392,20 +421,26 @@
 
       .footer-middle {
         font-size: 12px;
-        padding: 4px;
+        padding: 6px 4px;
       }
 
       #footerNotes {
         height: 60px !important;
       }
 
+      .sign-block {
+        min-height: 78px;
+      }
+
+      .sign-gap {
+        min-height: 36px;
+      }
+
       .sign-top {
-        margin-bottom: 12px;
         font-size: 11px;
       }
 
       .sign-bottom {
-        margin-top: 12px;
         font-size: 13px;
       }
 
@@ -488,16 +523,17 @@
       </table>
 
       <table class="items">
+        <!-- widths must sum to 100% to avoid Amount column clipping off page when printing -->
         <colgroup>
-          <col style="width: 5.4%;">
-          <col style="width: 9%;">
-          <col style="width: 31%;">
-          <col style="width: 13%;">
-          <col style="width: 13%;">
-          <col style="width: 7%;">
-          <col style="width: 6.5%;">
-          <col style="width: 10%;">
-          <col style="width: 10%;">
+          <col class="col-sr" style="width: 5%;">
+          <col class="col-hsn" style="width: 8%;">
+          <col class="col-desc" style="width: 28%;">
+          <col class="col-comp" style="width: 12%;">
+          <col class="col-batch" style="width: 12%;">
+          <col class="col-exp" style="width: 6.5%;">
+          <col class="col-qty" style="width: 6%;">
+          <col class="col-mrp" style="width: 10.5%;">
+          <col class="col-amt" style="width: 12%;">
         </colgroup>
         <thead>
           <tr>
@@ -527,8 +563,11 @@ GSTIN: Pan:    State Code: 27
 E &amp; OE.  Subject To PUNE jurisdiction</textarea>
           </td>
           <td class="footer-middle">
-            <div class="sign-top">For MEDICARE DRUG HOUSE</div>
-            <div class="sign-bottom">Pharmacists</div>
+            <div class="sign-block">
+              <div class="sign-top">For MEDICARE DRUG HOUSE</div>
+              <div class="sign-gap" aria-hidden="true"></div>
+              <div class="sign-bottom">Pharmacists</div>
+            </div>
           </td>
           <td class="footer-right">
             <table class="totals">
